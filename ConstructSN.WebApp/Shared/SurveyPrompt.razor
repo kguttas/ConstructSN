@@ -1,0 +1,16 @@
+﻿<div class="alert alert-secondary mt-4">
+    <span class="oi oi-pencil me-2" aria-hidden="true"></span>
+    <strong>@Title</strong>
+
+    <span class="text-nowrap">
+        Para ingresar su reclamo hagalo aquí:&nbsp;
+        <a class="font-weight-bold link-dark" href="/reclamos"><Badge Color="Color.Danger">Ingresar Reclamos</Badge></a>
+    </span>
+    , indicandonos los detalle de su reclamo para que sean compartidos con la comunidad.
+</div>
+
+@code {
+    // Demonstrates how a parent component can supply parameters
+    [Parameter]
+    public string? Title { get; set; }
+}

@@ -1,0 +1,115 @@
+﻿
+<PageTitle>@(Description + " | " + Title + " | Reclamos Casas Prefabridas")</PageTitle>
+
+    <HeadContent>
+        <meta name="description" content="@Description">
+    </HeadContent>
+
+@if (claimsForm != null)
+{
+    <div class="form-group mb-5">
+        <h1>@Title</h1>
+        <br />
+        <table class="table">
+            <tbody>
+                <tr>
+                    <td>Nombre empresa (o maestro)</td>
+                    <td>@claimsForm.NameCompany</td>
+                </tr>
+                <tr>
+                    <td>RUT</td>
+                    <td>@claimsForm.RUT</td>
+                </tr>
+                <tr>
+                    <td>Fecha del contrato o acuerdo</td>
+                    <td>@claimsForm.DateCommitment?.ToString("dd/MM/yyyy")</td>
+                </tr>
+                <tr>
+                    <td>Descripción del reclamo</td>
+                    <td>@claimsForm.ProblemDescription</td>
+                </tr>
+            </tbody>
+        </table>
+
+        @if (FrameworkData != null && FrameworkData.Count() > 0)
+        {
+            <div class="control-section db-carousel-section">
+                <div class="col-lg-12 content-wrapper">
+                    <div class="carousel-sample">
+                        <SfCarousel CssClass="db-carousel"  ButtonsVisibility="CarouselButtonVisibility.Visible" AnimationEffect="CarouselAnimationEffect.Fade" >
+                            @foreach (FrameworkDetails framework in FrameworkData)
+                            {
+                                <CarouselItem>
+                                    <div class="card">
+                                        <img src=@(framework.URL) class="card-img-top" alt=@framework.Title width="620" />
+                                        @*<div class="card-body" style="padding:1rem;">
+                                            <h5 class="card-title">@framework.Title</h5>
+                                            <p class="card-text">@framework.Content</p>
+                                        </div>*@
+                                    </div>
+                                </CarouselItem>
+                            }
+                        </SfCarousel>
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="form-group">
+
+
+            <button class="btn btn-secondary" @onclick="Cancel">Volver</button>
+        </div>
+    </div>
+}
+<style>
+    .db-carousel-section .carousel-sample {
+        border: 1px solid #e5e5e5;
+        border-radius: 0.5em;
+        margin: 0 auto 2em;
+        max-width: 720px;
+        height: 920px;
+    }
+
+    .db-carousel {
+        background-color: inherit;
+        border-radius: 0.5em;
+    }
+
+        .db-carousel .e-carousel-items .e-carousel-item .card-title,
+        .db-carousel .e-carousel-items .e-carousel-item .card-text {
+            opacity: 0;
+            text-align: justify;
+            transform: translateY(20px);
+        }
+
+        .db-carousel .e-carousel-items .e-carousel-item.e-active .card-title,
+        .db-carousel .e-carousel-items .e-carousel-item.e-active .card-text {
+            opacity: 1;
+            transform: translateY(0px);
+        }
+
+        .db-carousel .e-carousel-items .e-carousel-item .card-title {
+            font-size: 20px;
+            transition: transform 0.4s ease 0.2s;
+        }
+
+        .db-carousel .e-carousel-items .e-carousel-item .card-text {
+            font-size: 14px;
+            transition: transform 0.4s ease 0.2s;
+        }
+
+        .db-carousel .e-carousel-indicators {
+            height: 3em;
+        }
+
+            .db-carousel .e-carousel-indicators .e-indicator-bar .e-indicator div {
+                background-color: #e7e7e7;
+            }
+
+    @@media screen and (max-width: 480px) {
+        .db-carousel-section .carousel-sample {
+            width: 100%;
+            height: 440px;
+        }
+    }
+</style>

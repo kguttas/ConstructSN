@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ConstructSN.DAL\ConstructSN.DAL.csproj" />
+    <ProjectReference Include="..\ConstructSN.Shared\ConstructSN.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\images\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.0.5" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.0.5" />
+    <PackageReference Include="Syncfusion.Blazor" Version="20.2.0.36" />
+    <PackageReference Include="Syncfusion.Blazor.Themes" Version="20.2.0.36" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Resources\SfResources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>SfResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\SfResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>SfResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>
