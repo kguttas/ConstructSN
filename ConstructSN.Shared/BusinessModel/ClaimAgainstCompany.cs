@@ -29,12 +29,5 @@ namespace ConstructSN.Shared.BusinessModel
         [Required(ErrorMessage = "La descripción del problema por el cual reclama, es requerido.")]
         public string? ProblemDescription { get; set; }
 
-        //[Required]
-        [BsonIgnore]
-        [FileValidation(new[] { ".png", ".jpg" , ".jpeg" })]
-        public IBrowserFile[] Pictures { get; set; }
-
-        [BsonIgnore]
-        public IList<string> ImageDataUrls { get; set; }
     }
 }

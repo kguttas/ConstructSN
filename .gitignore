@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 wwwroot/images/
+/ConstructSN.WebApp/wwwroot/images

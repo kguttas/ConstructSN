@@ -5,6 +5,8 @@ using ConstructSN.Shared.BusinessModel;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Configuration;
+using Syncfusion.Blazor.Inputs;
+using Syncfusion.Blazor.Navigations;
 using System;
 
 
@@ -12,7 +14,7 @@ namespace ConstructSN.WebApp.Pages
 {
     //[Route("/reclamos/detalle/{idClaim}")]
     [Route("/reclamos/ingresar")]
-    public partial class AddClaim : ComponentBase, IDisposable
+    public partial class AddClaim : ComponentBase
     {
         [Inject] NavigationManager? NavigationManager { get; set; }
 
@@ -20,13 +22,13 @@ namespace ConstructSN.WebApp.Pages
 
         [Inject] IWebHostEnvironment? env { get; set; }
 
-       // private EditContext editContext;
+        //private EditContext editContext;
 
-        private CancellationTokenSource cancelation;
+        //private CancellationTokenSource cancelation;
 
-        private bool displayProgress;
+        //private bool displayProgress;
         
-        private int progressPercent;
+        //private int progressPercent;
 
         protected ClaimAgainstCompany claimsForm = new();
 
@@ -38,9 +40,14 @@ namespace ConstructSN.WebApp.Pages
 
         ClaimsRepository? repository { get; set; }
 
+        protected bool IsVisibleModal { get; set; } = false;
+
+        SfUploader? sfUploader { get; set; }
+
+
         protected override Task OnInitializedAsync()
         {
-            cancelation = new CancellationTokenSource();
+            //cancelation = new CancellationTokenSource();
 
             //editContext = new EditContext(claimsForm);
 
@@ -64,40 +71,34 @@ namespace ConstructSN.WebApp.Pages
 
         protected async Task SaveUser()
         {
+            IsVisibleModal = true;
+
             var result = await repository.Upsert(claimsForm);
 
-            for (int i = 0; i < TotalPictures; i++)
+            if (UploadFiles != null)
             {
                 var pathDirectory = $"{env.WebRootPath}\\images\\{claimsForm._id.ToString()}";
-                var pathImage = Path.Combine(pathDirectory, $"{claimsForm.Pictures[i].Name}");
-
+                
                 if (!Directory.Exists(pathDirectory))
                 {
                     Directory.CreateDirectory(pathDirectory);
                 }
 
-                using var file = File.OpenWrite(pathImage);
-                using var stream = claimsForm.Pictures[i].OpenReadStream(968435456);
-
-                var buffer = new byte[4 * 1096];
-                int bytesRead;
-                double totalRead = 0;
-
-                displayProgress = true;
-
-                while ((bytesRead = await stream.ReadAsync(buffer, cancelation.Token)) != 0)
+                for (int i = 0; i < UploadFiles.Count(); i++)
                 {
-                    totalRead += bytesRead;
-                    await file.WriteAsync(buffer, cancelation.Token);
+                    var pathImage = Path.Combine(pathDirectory, $"{UploadFiles[i].FileInfo.Name}");
 
-                    progressPercent = (int)((totalRead / claimsForm.Pictures[i].Size) * 100);
-                    StateHasChanged();
+                    FileStream filestream = new FileStream(pathImage, FileMode.Create, FileAccess.Write);
+
+                    UploadFiles[i].Stream.WriteTo(filestream);
+                    filestream.Close();
+                    UploadFiles[i].Stream.Close();
                 }
-
-                displayProgress = false;
             }
 
             Cancel();
+
+            IsVisibleModal = false;
         }
 
         public void Cancel()
@@ -105,33 +106,34 @@ namespace ConstructSN.WebApp.Pages
             NavigationManager?.NavigateTo("/reclamos");
         }
 
-        private IList<string> imageDataUrls = new List<string>();
+        public List<UploadFiles>? UploadFiles { get; set; }
 
-        private int TotalPictures { get; set; }
-
-        private async Task LoadFiles(InputFileChangeEventArgs e)
+        protected void SfUpload_OnChange(UploadChangeEventArgs args)
         {
-            claimsForm.Pictures = e.GetMultipleFiles().ToArray();
+            UploadFiles = args.Files;
 
-            var format = "image/png";
-            TotalPictures = e.GetMultipleFiles().Count();
-            foreach (var imageFile in e.GetMultipleFiles())
-            {
-                var resizedImageFile = await imageFile.RequestImageFileAsync(format, 512, 512);
-                var buffer = new byte[resizedImageFile.Size];
-                await resizedImageFile.OpenReadStream().ReadAsync(buffer);
-                var imageDataUrl = $"data:{format};base64,{Convert.ToBase64String(buffer)}";
-                imageDataUrls.Add(imageDataUrl);
-                claimsForm.ImageDataUrls = imageDataUrls;
-            }
-            
-            //editContext.NotifyFieldChanged(FieldIdentifier.Create(() => claimsForm.Pictures));
         }
 
-        public void Dispose()
+        private void SuccessHandler(SuccessEventArgs args)
         {
-            cancelation.Cancel();
+            IsVisibleModal = true;
+
+            base.StateHasChanged();
         }
 
+        private void OnActionCompleteHandler(ActionCompleteEventArgs args)
+        {
+            IsVisibleModal = false;
+
+            base.StateHasChanged();
+        }
+
+        private void FileSelectedHandler(SelectedEventArgs args)
+        {
+            // Here, you can customize your code.
+            IsVisibleModal = true;
+
+            base.StateHasChanged();
+        }
     }
 }
